@@ -13,11 +13,11 @@ import com.example.todolist2402.Note
 import com.example.todolist2402.NoteDataBase
 
 
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), NoteAdapter.NoteEdit {
 
-    lateinit var binding:FragmentHomeBinding
+    lateinit var binding: FragmentHomeBinding
 
-    lateinit var database: NoteDataBase
+
     lateinit var note: Note
 
     override fun onCreateView(
@@ -25,19 +25,19 @@ class HomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        binding=FragmentHomeBinding.inflate(inflater,container,false)
+        binding = FragmentHomeBinding.inflate(inflater, container, false)
 
 
-        database = Room.databaseBuilder(requireActivity(), NoteDataBase::class.java, "Note-DB")
-            .allowMainThreadQueries().build()
+        var notes: List<Note> = NoteDataBase.getDB(requireContext()).getNoteDao().getAllData()
 
-       var notes: List<Note> = database.getNoteDao().getAllData()
+        notes.let {
+            var adapter = NoteAdapter(this)
+            adapter.submitList(notes)
 
+            binding.recyclerView.adapter = adapter
 
-        var adapter = NoteAdapter()
-        adapter.submitList(notes)
+        }
 
-        binding.recyclerView.adapter = adapter
 
 
         binding.addBtn.setOnClickListener {
@@ -50,6 +50,14 @@ class HomeFragment : Fragment() {
         return binding.root
     }
 
+    override fun onNoteEdit(note: Note) {
+
+        var bundle = Bundle()
+        bundle.putInt("note", note.id)
+
+        findNavController().navigate(R.id.action_homeFragment_to_addNoteFragment, bundle)
+
+    }
 
 
 }

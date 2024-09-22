@@ -22,21 +22,33 @@ class AddNoteFragment : Fragment() {
     var showTime: String? = null
     var showDate: String? = null
 
-    lateinit var  note: Note
-    lateinit var database: NoteDataBase
+    lateinit var note: Note
 
+    var noteId = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         binding = FragmentAddNoteBinding.inflate(inflater, container, false)
 
+        noteId = requireArguments().getInt("note")
 
+        if (noteId != 0) {
 
-        database = Room.databaseBuilder(requireActivity(), NoteDataBase::class.java, "Note-DB")
-            .allowMainThreadQueries().build()
+            note = NoteDataBase.getDB(requireContext()).getNoteDao()
+                .loadAllByIds(listOf<Int>(noteId))[0]
 
+            binding.apply {
+
+                titleET.setText(note.title)
+                timeBtn.setText(note.time)
+                dateBtn.setText(note.date)
+
+            }
+
+        }
 
         binding.dateBtn.setOnClickListener {
 
@@ -52,7 +64,14 @@ class AddNoteFragment : Fragment() {
             val dateStr = showDate ?: "00/00/0000"
 
             val note = Note(title = titleStr, time = timeStr, date = dateStr)
-            database.getNoteDao().insertData(note)
+
+            if (noteId == 0){
+                NoteDataBase.getDB(requireContext()).getNoteDao().insertData(note)
+            }else{
+                note.id = noteId
+                NoteDataBase.getDB(requireContext()).getNoteDao().updateData(note)
+            }
+
 
 
             findNavController().navigate(R.id.action_addNoteFragment_to_homeFragment)
@@ -95,7 +114,7 @@ class AddNoteFragment : Fragment() {
         val showDatePicker = DatePickerDialog(
             requireActivity(), DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
 
-              showDate = "$dayOfMonth/${month+1}/$year"
+                showDate = "$dayOfMonth/${month + 1}/$year"
                 binding.dateBtn.text = showDate
 
             }, year, month, day

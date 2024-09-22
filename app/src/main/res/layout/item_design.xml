@@ -26,7 +26,7 @@
             android:textColor="@color/white"/>
 
         <TextView
-            android:id="@+id/DateTV"
+            android:id="@+id/dateTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="12-10-1990"
@@ -35,7 +35,7 @@
             android:textColor="#E4D97B"/>
 
         <TextView
-            android:id="@+id/TimeTV"
+            android:id="@+id/timeTV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="12:15 PM"

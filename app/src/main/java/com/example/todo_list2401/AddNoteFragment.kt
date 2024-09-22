@@ -2,14 +2,13 @@ package com.example.todo_list2401
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.DialogInterface
 import android.icu.util.Calendar
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
+import androidx.navigation.fragment.findNavController
 import androidx.room.Room
 import com.example.todo_list2401.databinding.FragmentAddNoteBinding
 import com.example.todolist2402.Note
@@ -23,13 +22,17 @@ class AddNoteFragment : Fragment() {
     var showTime: String? = null
     var showDate: String? = null
 
+    lateinit var  note: Note
     lateinit var database: NoteDataBase
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentAddNoteBinding.inflate(inflater, container, false)
+
+
 
         database = Room.databaseBuilder(requireActivity(), NoteDataBase::class.java, "Note-DB")
             .allowMainThreadQueries().build()
@@ -50,6 +53,10 @@ class AddNoteFragment : Fragment() {
 
             val note = Note(title = titleStr, time = timeStr, date = dateStr)
             database.getNoteDao().insertData(note)
+
+
+            findNavController().navigate(R.id.action_addNoteFragment_to_homeFragment)
+
         }
 
 
